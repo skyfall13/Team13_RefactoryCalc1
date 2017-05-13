@@ -46,10 +46,10 @@ public class Token {
                             return false;
                     }
                 } else {
-                    int inComingP = inComingPrecedence(curToken);
+                    int inComingP = Precedence(curToken, true);
                     if (!this.oStack.isEmpty()) {
                         topToken = (String) this.oStack.peek();
-                        while (inStackPrecedence(topToken) >= inComingP) {
+                        while (Precedence(topToken, false) >= inComingP) {
                             str.poppedToken = (String) this.oStack.pop();
                             this.postfix[p++] = str.poppedToken;
                             if (!this.oStack.isEmpty())
@@ -69,43 +69,23 @@ public class Token {
         return true;
     }
 
-    private int inComingPrecedence(String givenToken) {
+    private int Precedence(String givenToken, boolean incoming) {
         char tempChar = givenToken.charAt(0);
 
         switch (tempChar) {
             case '+':
             case '-':
-                return 12;
+                                return 12;
             case '*':
             case '/':
-                return 13;
+                                return 13;
             case '(':
-                return 20;
+                if (incoming) { return 20; }
+                else          { return 0; }
             case ')':
-                return 19;
+                                return 19;
             default:
-                return -1;
-        }
-
-    }
-
-    private int inStackPrecedence(String givenToken) {
-
-        char tempChar = givenToken.charAt(0);
-
-        switch (tempChar) {
-            case '+':
-            case '-':
-                return 12;
-            case '*':
-            case '/':
-                return 13;
-            case '(':
-                return 0;
-            case ')':
-                return 19;
-            default:
-                return -1;
+                                return -1;
         }
 
     }
