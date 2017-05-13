@@ -9,11 +9,11 @@ import java.util.Stack;
 public class CalcApp {
 	public static void main(String[] args) {
 
-		final Evaluate app = new Evaluate();
+		final Evaluate eval = new Evaluate();
 		final StringBuilder outputs = new StringBuilder();
 		Arrays.asList(args).forEach(value -> outputs.append(value + " "));
 		System.out.print("Addition of values: " + outputs + " = ");
-		System.out.println(app.calc(args));
+		System.out.println(eval.calc(args));
 
 	}
 }
