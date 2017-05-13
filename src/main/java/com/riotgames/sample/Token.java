@@ -9,6 +9,7 @@ public class Token {
     private String[] postfix;
     private Stack<String> oStack;
 
+    private class MyString { String poppedToken = "";}
     public String[] getPostfix() {
         return this.postfix;
     }
@@ -25,7 +26,9 @@ public class Token {
         int p = 0;
         String[] tokens = args;
 
-        String curToken, poppedToken, topToken;
+        String curToken, topToken;
+        MyString str = new MyString();
+
         this.oStack = new Stack<String>();
         this.postfix = new String[tokens.length];
 
@@ -34,17 +37,12 @@ public class Token {
             if (this.isDigit(curToken))
                 this.postfix[p++] = curToken;
             else {
-                if (curToken.charAt(0) == ')' && !this.oStack.isEmpty()) {
-                    if (!this.oStack.isEmpty())
-                        poppedToken = (String) this.oStack.pop();
-                    else
+                if (curToken.charAt(0) == ')') {
+                    if (!this.q1(this.oStack, str))
                         return false;
-
-                    while (poppedToken.charAt(0) != '(') {
-                        this.postfix[p++] = poppedToken;
-                        if (!this.oStack.isEmpty())
-                            poppedToken = (String) this.oStack.pop();
-                        else
+                    while (str.poppedToken.charAt(0) != '(') {
+                        this.postfix[p++] = str.poppedToken;
+                        if (!this.q1(this.oStack, str))
                             return false;
                     }
                 } else {
@@ -52,8 +50,8 @@ public class Token {
                     if (!this.oStack.isEmpty()) {
                         topToken = (String) this.oStack.peek();
                         while (inStackPrecedence(topToken) >= inComingP) {
-                            poppedToken = (String) this.oStack.pop();
-                            this.postfix[p++] = poppedToken;
+                            str.poppedToken = (String) this.oStack.pop();
+                            this.postfix[p++] = str.poppedToken;
                             if (!this.oStack.isEmpty())
                                 topToken = (String) this.oStack.peek();
                             else
@@ -65,8 +63,8 @@ public class Token {
             }
         }
         while (!this.oStack.isEmpty()) {
-            poppedToken = (String) this.oStack.pop();
-            this.postfix[p++] = poppedToken;
+            str.poppedToken = (String) this.oStack.pop();
+            this.postfix[p++] = str.poppedToken;
         }
         return true;
     }
@@ -110,5 +108,13 @@ public class Token {
                 return -1;
         }
 
+    }
+    private boolean q1(Stack stack, MyString str) {
+        if (!stack.isEmpty()) {
+            str.poppedToken = (String) stack.pop();
+            return true;
+        } else {
+            return false;
+        }
     }
 }

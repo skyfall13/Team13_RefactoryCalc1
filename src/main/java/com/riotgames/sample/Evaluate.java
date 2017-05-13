@@ -38,17 +38,5 @@ public class Evaluate {
         result = this.vStack.pop();
         return result;
     }
-
-
-//    private boolean q1(Stack stack, String object){
-//        if(stack.isEmpty()) {
-//            Object temp = object;
-//            temp = (String) stack.pop();
-//            return true;
-//        }else {
-//            return false;
-//        }
-//    }
-
 }
 
