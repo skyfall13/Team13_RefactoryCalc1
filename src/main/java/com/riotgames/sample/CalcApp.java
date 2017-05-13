@@ -9,8 +9,8 @@ import java.util.Stack;
 public class CalcApp {
 
 	private String[] postfix;
-	private Stack<String> oStack;
-	private Stack<Double> vStack;
+	private Stack<String> operatorStack;
+	private Stack<Double> valueStack;
 
 	public static void main(String[] args) {
 		final CalcApp app = new CalcApp();
@@ -31,20 +31,20 @@ public class CalcApp {
 		int p = 0;
 		String curToken;
 		Double popToken1, popToken2, result;
-		this.vStack = new Stack<Double>();
+		this.valueStack = new Stack<Double>();
 
 		while (p < this.postfix.length && this.postfix[p] != null) {
 			curToken = this.postfix[p++];
 			if (this.isDigit(curToken)) {
-				this.vStack.push(Double.parseDouble(String.valueOf(curToken)));
+				this.valueStack.push(Double.parseDouble(String.valueOf(curToken)));
 			} else {
-				popToken1 = this.vStack.pop();
-				popToken2 = this.vStack.pop();
+				popToken1 = this.valueStack.pop();
+				popToken2 = this.valueStack.pop();
 				Operator operator = Operator.findOperator(curToken);
-				this.vStack.push(operator.evaluate(popToken2, popToken1));
+				this.valueStack.push(operator.evaluate(popToken2, popToken1));
 			}
 		}
-		result = this.vStack.pop();
+		result = this.valueStack.pop();
 		return result;
 	}
 
@@ -61,7 +61,7 @@ public class CalcApp {
 		String[] tokens = args;
 
 		String curToken, poppedToken, topToken;
-		this.oStack = new Stack<String>();
+		this.operatorStack = new Stack<String>();
 		this.postfix = new String[tokens.length];
 
 		while (i < tokens.length) {
@@ -70,46 +70,45 @@ public class CalcApp {
 				this.postfix[p++] = curToken;
 			else {
 				if (curToken.charAt(0) == ')') {
-					if (!this.oStack.isEmpty())
-						poppedToken = (String) this.oStack.pop();
+					if (!this.operatorStack.isEmpty())
+						poppedToken = (String) this.operatorStack.pop();
 					else
 						return false;
 
 					while (poppedToken.charAt(0) != '(') {
 						this.postfix[p++] = poppedToken;
-						if (!this.oStack.isEmpty())
-							poppedToken = (String) this.oStack.pop();
+						if (!this.operatorStack.isEmpty())
+							poppedToken = (String) this.operatorStack.pop();
 						else
 							return false;
 					}
 				} else {
 					int inComingP = inComingPrecedence(curToken);
-					if (!this.oStack.isEmpty()) {
-						topToken = (String) this.oStack.peek();
+					if (!this.operatorStack.isEmpty()) {
+						topToken = (String) this.operatorStack.peek();
 						while (inStackPrecedence(topToken) >= inComingP) {
-							poppedToken = (String) this.oStack.pop();
+							poppedToken = (String) this.operatorStack.pop();
 							this.postfix[p++] = poppedToken;
-							if (!this.oStack.isEmpty())
-								topToken = (String) this.oStack.peek();
+							if (!this.operatorStack.isEmpty())
+								topToken = (String) this.operatorStack.peek();
 							else
 								break;
 						}
 					}
-					this.oStack.push(curToken);
+					this.operatorStack.push(curToken);
 				}
 			}
 		}
-		while (!this.oStack.isEmpty()) {
-			poppedToken = (String) this.oStack.pop();
+		while (!this.operatorStack.isEmpty()) {
+			poppedToken = (String) this.operatorStack.pop();
 			this.postfix[p++] = poppedToken;
 		}
 		return true;
 	}
 
 	private int inComingPrecedence(String givenToken) {
-		char tempChar = givenToken.charAt(0);
 
-		switch (tempChar) {
+        switch (givenToken.charAt(0)) {
 		case '+':
 		case '-':
 			return 12;
@@ -128,9 +127,7 @@ public class CalcApp {
 
 	private int inStackPrecedence(String givenToken) {
 
-		char tempChar = givenToken.charAt(0);
-
-		switch (tempChar) {
+        switch (givenToken.charAt(0)) {
 		case '+':
 		case '-':
 			return 12;
