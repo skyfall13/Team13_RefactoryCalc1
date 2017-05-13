@@ -35,7 +35,7 @@ public class CalcApp {
 
 		while (p < this.postfix.length && this.postfix[p] != null) {
 			curToken = this.postfix[p++];
-			if (this.isDigit(curToken)) {
+			if (new IsDigit().isDigit(curToken)) {
 				this.valueStack.push(Double.parseDouble(String.valueOf(curToken)));
 			} else {
 				popToken1 = this.valueStack.pop();
@@ -48,13 +48,6 @@ public class CalcApp {
 		return result;
 	}
 
-	public boolean isDigit(String token) {
-		if (token.charAt(0) >= '0' && token.charAt(0) <= '9')
-			return true;
-		else
-			return false;
-	}
-
 	public boolean token2Postfix(String[] args) {
 		int i = 0;
 		int p = 0;
@@ -64,9 +57,9 @@ public class CalcApp {
 		this.operatorStack = new Stack<String>();
 		this.postfix = new String[tokens.length];
 
-		while (i < tokens.length) {
+        while (i < tokens.length) {
 			curToken = tokens[i++];
-			if (this.isDigit(curToken))
+			if (new IsDigit().isDigit(curToken))
 				this.postfix[p++] = curToken;
 			else {
 				if (curToken.charAt(0) == ')') {
@@ -82,7 +75,8 @@ public class CalcApp {
 						else
 							return false;
 					}
-				} else {
+				}
+				else {
 					int inComingP = inComingPrecedence(curToken);
 					if (!this.operatorStack.isEmpty()) {
 						topToken = (String) this.operatorStack.peek();
